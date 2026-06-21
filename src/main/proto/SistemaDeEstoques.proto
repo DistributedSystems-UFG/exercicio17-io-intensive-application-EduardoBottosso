@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package marmitaria.estoques.v1;
+
+option java_multiple_files = true;
+option java_package = "br.ufg.marmitaria.estoques.grpc";
+option java_outer_classname = "SistemaDeEstoquesProto";
+
+service SistemaDeEstoques {
+  rpc ConsultarEstoqueGeral(ConsultaEstoqueRequest)
+      returns (EstoqueGeralResponse);
+
+  rpc ConsultarEstoqueMarmitas(ConsultaEstoqueRequest)
+      returns (EstoqueMarmitasResponse);
+
+  rpc ConsultarEstoqueInsumos(ConsultaEstoqueRequest)
+      returns (EstoqueInsumosResponse);
+
+  rpc AjustarEstoqueMarmita(AjusteEstoqueMarmitaRequest)
+      returns (OperacaoEstoqueResponse);
+
+  rpc AjustarEstoqueInsumo(AjusteEstoqueInsumoRequest)
+      returns (OperacaoEstoqueResponse);
+
+  rpc DefinirEstoqueMarmitas(DefinirEstoqueMarmitasRequest)
+      returns (OperacaoEstoqueResponse);
+
+  rpc DefinirEstoqueInsumos(DefinirEstoqueInsumosRequest)
+      returns (OperacaoEstoqueResponse);
+
+  rpc ZerarEstoqueMarmitas(OperacaoVaziaRequest)
+      returns (OperacaoEstoqueResponse);
+
+  rpc ZerarEstoqueInsumos(OperacaoVaziaRequest)
+      returns (OperacaoEstoqueResponse);
+}
+
+// O atraso é opcional e existe apenas para tornar os testes de concorrência visíveis.
+message ConsultaEstoqueRequest {
+  int32 atraso_simulado_ms = 1;
+}
+
+message OperacaoVaziaRequest {
+}
+
+message EstoqueMarmitasData {
+  int32 quantidade_p = 1;
+  int32 quantidade_m = 2;
+  int32 quantidade_g = 3;
+}
+
+message EstoqueInsumosData {
+  int32 porcoes_arroz = 1;
+  int32 porcoes_feijao = 2;
+  int32 porcoes_macarrao = 3;
+  int32 porcoes_carne = 4;
+  int32 porcoes_verduras = 5;
+  int32 embalagens_p = 6;
+  int32 embalagens_m = 7;
+  int32 embalagens_g = 8;
+}
+
+message EstoqueMarmitasResponse {
+  EstoqueMarmitasData estoque = 1;
+  string thread_processamento = 2;
+}
+
+message EstoqueInsumosResponse {
+  EstoqueInsumosData estoque = 1;
+  string thread_processamento = 2;
+}
+
+message EstoqueGeralResponse {
+  EstoqueMarmitasData marmitas = 1;
+  EstoqueInsumosData insumos = 2;
+  string thread_processamento = 3;
+}
+
+enum TipoMarmita {
+  TIPO_MARMITA_NAO_ESPECIFICADO = 0;
+  MARMITA_P = 1;
+  MARMITA_M = 2;
+  MARMITA_G = 3;
+}
+
+enum TipoInsumo {
+  TIPO_INSUMO_NAO_ESPECIFICADO = 0;
+  ARROZ = 1;
+  FEIJAO = 2;
+  MACARRAO = 3;
+  CARNE = 4;
+  VERDURAS = 5;
+  EMBALAGEM_P = 6;
+  EMBALAGEM_M = 7;
+  EMBALAGEM_G = 8;
+}
+
+message AjusteEstoqueMarmitaRequest {
+  TipoMarmita tipo = 1;
+
+  // Positivo adiciona; negativo retira.
+  int32 variacao = 2;
+}
+
+message AjusteEstoqueInsumoRequest {
+  TipoInsumo tipo = 1;
+
+  // Positivo adiciona; negativo retira.
+  int32 variacao = 2;
+}
+
+message DefinirEstoqueMarmitasRequest {
+  EstoqueMarmitasData estoque = 1;
+}
+
+message DefinirEstoqueInsumosRequest {
+  EstoqueInsumosData estoque = 1;
+}
+
+message OperacaoEstoqueResponse {
+  bool sucesso = 1;
+  string mensagem = 2;
+
+  // Na operação de ajuste, é a quantidade atual do item.
+  // Nas operações sobre o estoque inteiro, é o total das quantidades.
+  int32 quantidade_atual = 3;
+
+  string thread_processamento = 4;
+}

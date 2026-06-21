@@ -1,0 +1,10 @@
+{
+  "porcoesArroz" : 100,
+  "porcoesFeijao" : 100,
+  "porcoesMacarrao" : 100,
+  "porcoesCarne" : 80,
+  "porcoesVerduras" : 70,
+  "embalagensP" : 30,
+  "embalagensM" : 25,
+  "embalagensG" : 20
+}
