@@ -217,6 +217,8 @@ def teste_concorrencia(
         print(f"  Requisição {numero:02d}: {duracao:.3f}s | {thread}")
 
     print(f"Tempo total: {duracao_total:.3f}s")
+    vazao = quantidade / duracao_total
+    print(f"Vazão: {vazao:.2f} requisições/s")
 
 
 def executar_menu(host: str, porta: int) -> None:
